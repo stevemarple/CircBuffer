@@ -5,7 +5,8 @@ CircBuffer::CircBuffer(void* myBuffer, int myBufferLen, int myBlockSize) :
   buffer((uint8_t*)myBuffer),
   bufferLen(myBufferLen),
   writePtr((uint8_t*)myBuffer),
-  readPtr((uint8_t*)myBuffer)
+  readPtr((uint8_t*)myBuffer),
+  size(0)
 {
   if (blockSize > 1)
     blockSize = myBlockSize;
@@ -17,12 +18,15 @@ CircBuffer::CircBuffer(void* myBuffer, int myBufferLen, int myBlockSize) :
 
 int CircBuffer::write(const uint8_t* src, int srcLen)
 {
+  if (bufferLen == 0)
+    return 0;
+  
   if (blockSize)
     // Round down to a multiple of the blockSize
     srcLen -= (srcLen % blockSize);
   
   for (int i = 0; i < srcLen; ++i) {
-    *writePtr++ = *src++;
+    *writePtr++ = *src++; // bufferLen MUST be >= 1
     if (writePtr >= getEndOfBuffer())
       writePtr = buffer;
   }
@@ -53,9 +57,6 @@ int CircBuffer::read(uint8_t* dest, int destLen)
     // Round down to a multiple of the blockSize
     destLen -= (destLen % blockSize);
 
-  if (destLen > size)
-    destLen = size;
-  
   for (int i = 0; i < destLen; ++i) {
     *dest++ = *readPtr++;
     if (readPtr >= getEndOfBuffer())
