@@ -118,3 +118,10 @@ int CircBuffer::skip(int len)
   return len;
 }
 
+
+void CircBuffer::clear(void)
+{
+  writePtr = buffer;
+  readPtr = buffer;
+  size = 0;
+}

@@ -31,6 +31,8 @@ public:
   int peek(uint8_t* dest, int destLen);
   int skip(int len);
 
+  void clear(void);
+
 #ifdef CB_DEBUG
   inline void status(const char *file = NULL, int line = 0) const;
 #endif
